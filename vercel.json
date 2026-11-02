@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "redirects": [
+    { "source": "/", "destination": "/web/", "permanent": false },
+    { "source": "/web", "destination": "/web/", "permanent": false }
+  ],
+  "rewrites": [
+    { "source": "/web/", "destination": "/web/index.html" }
+  ]
+}
