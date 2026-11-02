@@ -41,3 +41,7 @@ After calculation, choose a policy and press **Play schedule** to replay its com
 4. Open the deployment, confirm the example results load, edit a job, and press **Run comparison**. A working deployment returns JSON from `POST /api/simulate`.
 
 Local development still uses `npm start`; the separate Vercel function exists only for serverless hosting. `npm test` covers both entry points. This repository configures Vercel deployment but does not automatically create a Vercel project or deployment.
+
+## Hosted on GitHub Pages
+
+The public site is [Power-Aware CPU Scheduling Simulator](https://mayank17op.github.io/Power-Aware-CPU-Scheduling-Simulator/). GitHub Pages has no server runtime, so its version runs the same scheduling engine **in your browser**; its calculation indicator says so. The local Node and Vercel versions still use the `/api/simulate` backend. Relative URLs and `.nojekyll` keep JavaScript modules, example data and styles working under the repository subpath.
