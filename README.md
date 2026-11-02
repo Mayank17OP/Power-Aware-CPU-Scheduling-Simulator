@@ -32,3 +32,12 @@ Next: integration/accessibility testing, documentation and deployment (step 6).
 ## Animated schedule playback
 
 After calculation, choose a policy and press **Play schedule** to replay its completed timeline. The CPU indicator, active segment, job label and simulated clock change during playback. Pause, seek, or reset at any time. This animation replays calculated simulation results; it does **not** monitor a physical CPU or stream an in-progress calculation. The loading indicator appears only while the browser awaits the backend response.
+
+## Deploy on Vercel
+
+1. Import this GitHub repository into Vercel and select the branch you want deployed.
+2. Choose **Other** as the framework preset, leave Root Directory as the repository root, and leave Build Command and Output Directory unset (no build step). Use Node.js 22.x.
+3. Deploy. The root URL redirects to `/web/` so relative CSS, JavaScript and example URLs load correctly. The `/api/simulate` route is a Vercel Node.js Function using the same simulator as `npm start`. No API keys or environment variables are needed.
+4. Open the deployment, confirm the example results load, edit a job, and press **Run comparison**. A working deployment returns JSON from `POST /api/simulate`.
+
+Local development still uses `npm start`; the separate Vercel function exists only for serverless hosting. `npm test` covers both entry points. This repository configures Vercel deployment but does not automatically create a Vercel project or deployment.
