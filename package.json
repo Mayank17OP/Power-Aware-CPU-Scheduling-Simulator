@@ -1,0 +1,8 @@
+{
+  "name": "power-aware-cpu-scheduling-simulator",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {"test": "node --test", "start": "node server.js"},
+  "engines": {"node": ">=20"}
+}

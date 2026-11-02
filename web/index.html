@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Power-Aware CPU Scheduling Simulator</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <main class="shell">
+    <nav class="topnav" aria-label="Primary navigation"><a class="brand" href="/web/" aria-label="PowerSched home"><span class="brand-mark">P<span>●</span></span><span>PowerSched<span class="brand-suffix"> / LAB</span></span></a><div class="nav-links"><a href="#sim-form">Simulator</a><a href="#how-it-works">How it works</a><a href="#about-model">About the model</a></div><span class="nav-badge"><span class="pulse"></span> INTERACTIVE SIMULATOR</span></nav>
+    <header class="hero">
+      <div class="hero-content"><span class="eyebrow"><span class="eyebrow-line"></span> EXPLORE THE TRADE-OFF</span>
+      <h1>Smarter scheduling.<br><em>Less wasted energy.</em></h1>
+      <p>Explore how CPU scheduling affects energy use and the time jobs wait to start. Edit a workload, compare three policies, and see every decision unfold.</p>
+      <div class="hero-actions"><a class="hero-cta" href="#sim-form">Start simulating <span aria-hidden="true">↗</span></a><a class="hero-link" href="#how-it-works">How does it work? <span aria-hidden="true">↓</span></a></div></div>
+      <div class="hero-visual" aria-hidden="true"><div class="visual-top"><span>LIVE SCHEDULING MODEL</span><span class="live-dot">● &nbsp;READY</span></div><div class="visual-body"><div class="visual-label">CPU LOAD <span>SIMULATION</span></div><div class="wave-bars"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="visual-axis"><span>0 ms</span><span>TIME →</span><span>END</span></div><div class="visual-metrics"><div><small>POLICIES</small><strong>03</strong></div><div><small>METRICS</small><strong>07+</strong></div><div><small>YOUR CONTROL</small><strong>100%</strong></div></div></div></div>
+    </header>
+    <section class="intro-strip" aria-label="Simulator highlights"><div><span class="strip-icon">↗</span><span><strong>Compare policies</strong><small>FCFS · Round Robin · Power-aware</small></span></div><div><span class="strip-icon">◉</span><span><strong>Explore the balance</strong><small>Energy vs. response time</small></span></div><div><span class="strip-icon">▦</span><span><strong>See the full picture</strong><small>Timeline · charts · job details</small></span></div></section>
+    <div class="workspace-heading"><div><span class="eyebrow">THE WORKSPACE</span><h2>Build your simulation<span class="heading-period">.</span></h2><p>Start with the example below or configure your own workload.</p></div><span class="workspace-tag">SINGLE-CORE MODEL / V1.0</span></div>
+    <form id="sim-form" novalidate>
+      <div class="grid">
+        <section class="card" aria-labelledby="jobs-title">
+          <div class="section-heading"><div><span class="step">01 / WORKLOAD</span><h2 id="jobs-title">Jobs</h2></div><button type="button" id="add-job" class="secondary">+ Add job</button></div>
+          <p class="hint">Arrival is when a job becomes ready. Work is CPU time at frequency 1.0.</p>
+          <div class="table-scroll"><table><thead><tr><th scope="col">ID</th><th scope="col">Arrival (ms)</th><th scope="col">Work (ms)</th><th scope="col"><span class="sr-only">Remove</span></th></tr></thead><tbody id="job-rows"></tbody></table></div>
+        </section>
+        <section class="card" aria-labelledby="machine-title">
+          <div class="section-heading"><div><span class="step">02 / MACHINE</span><h2 id="machine-title">CPU power states</h2></div><button type="button" id="add-state" class="secondary">+ Add state</button></div>
+          <p class="hint">Each frequency has an active power draw. States must increase in frequency and power.</p>
+          <div class="table-scroll"><table><thead><tr><th scope="col">Frequency</th><th scope="col">Power (W)</th><th scope="col"><span class="sr-only">Remove</span></th></tr></thead><tbody id="state-rows"></tbody></table></div>
+          <div class="field-row"><label>Idle power (W)<input id="idleWatts" type="number" min="0" step="any" required></label><label>Switch time (ms)<input id="switchMs" type="number" min="0" step="any" required></label></div>
+        </section>
+      </div>
+      <section class="card settings" aria-labelledby="settings-title">
+        <div><span class="step">03 / COMPARE</span><h2 id="settings-title">Scheduling settings</h2><p class="hint">FCFS and Round Robin use the frequency closest to 1.0. Power-aware chooses a frequency for each slice.</p></div>
+        <div class="field-row"><label>Time slice (ms)<input id="quantumMs" type="number" min="0.000000001" step="any" required></label><label>Energy weight (0–1)<input id="weight" type="number" min="0" max="1" step="0.05" required></label></div>
+        <label class="slider-label" for="weight-slider">Adjust energy weight</label><input id="weight-slider" type="range" min="0" max="1" step="0.05" value="0.5" aria-label="Adjust energy weight">
+        <p class="hint">0 favors shorter estimated response delay; 1 favors lower active-slice energy. Neither guarantees the best overall result.</p>
+        <div class="sweep"><label><input id="sweep-enabled" type="checkbox"> Compare several weights</label><label id="sweep-field" hidden>Weights, separated by commas (0–1)<input id="sweepWeights" type="text" placeholder="0, 0.25, 0.5, 0.75, 1" aria-describedby="sweep-help"></label><small id="sweep-help">Optional: run the power-aware policy at each listed weight. The chart and exact values appear in the results below.</small></div>
+      </section>
+      <div id="errors" class="errors" role="alert" hidden></div><div id="backend-progress" class="backend-progress" role="status" hidden><span class="progress-spinner" aria-hidden="true"></span><div><strong>Calculating on the server</strong><small>Checking jobs · building schedules · measuring energy</small></div></div>
+      <div class="actions"><button id="run-button" type="submit" class="primary">Run comparison <span aria-hidden="true">→</span></button><button type="button" id="reset" class="secondary">Load example</button><label class="import secondary">Import JSON <input id="import" type="file" accept="application/json,.json"></label></div>
+      <p id="status" role="status" aria-live="polite" class="status">Edit the example, then run a comparison.</p>
+    </form>
+    <section id="results" class="card results" aria-labelledby="results-title" hidden>
+      <span class="step">04 / RESULTS</span><h2 id="results-title">Comparison</h2>
+      <p>Lower energy and response time are better. A trade-off may mean there is no single winner.</p><div id="result-insight" class="insight" role="status"></div>
+      <div class="table-scroll"><table><thead><tr><th scope="col">Policy</th><th scope="col">Energy (mJ)</th><th scope="col">Mean response (ms)</th><th scope="col">Max response (ms)</th><th scope="col">Completion (ms)</th></tr></thead><tbody id="result-rows"></tbody></table></div>
+      <p class="hint">Response time is from arrival until a job first starts running. Figures below are rounded for display; JSON keeps full precision.</p>
+      <div class="result-toolbar"><label for="policy-view">Inspect policy <select id="policy-view"><option value="fcfs">FCFS</option><option value="rr">Round Robin</option><option value="powerAware">Power-aware</option></select></label><button id="download" type="button" class="secondary">Download JSON ↓</button></div>
+      <div class="playback" aria-label="Schedule playback controls"><div class="playback-header"><div class="playback-core" id="playback-core" aria-hidden="true">▣</div><div><span class="playback-kicker">SCHEDULE REPLAY · SIMULATED TIME</span><strong id="playback-state">Ready to replay</strong><small id="playback-clock">0.00 ms / 0.00 ms</small></div><span class="playback-badge" id="playback-badge">READY</span></div><div class="playback-controls"><button type="button" id="playback-toggle" class="primary">▶ Play schedule</button><label for="playback-seek" class="sr-only">Seek through simulated time</label><input type="range" id="playback-seek" min="0" max="1000" value="0"><button type="button" id="playback-reset" class="secondary">↺ Reset</button></div><p class="playback-disclaimer">Playback animates the server’s completed calculation. It is not real-time CPU activity.</p></div>
+      <div class="detail-grid"><div><h3>Execution timeline</h3><p class="hint">Segments are ordered by simulated time. Scroll horizontally to inspect longer schedules.</p><div id="timeline" class="timeline" role="img" aria-label="Execution timeline; full event details are listed below"></div></div><div><h3>Energy breakdown</h3><dl id="energy-breakdown" class="breakdown"></dl></div></div>
+      <details><summary>Timeline events (text alternative)</summary><div class="table-scroll"><table><thead><tr><th scope="col">Event</th><th scope="col">Start (ms)</th><th scope="col">End (ms)</th><th scope="col">Frequency</th><th scope="col">Energy (mJ)</th></tr></thead><tbody id="event-rows"></tbody></table></div></details>
+      <h3>Job details</h3><div class="table-scroll"><table><thead><tr><th scope="col">Job</th><th scope="col">Arrival</th><th scope="col">First start</th><th scope="col">Completion</th><th scope="col">Response</th><th scope="col">Turnaround</th><th scope="col">Waiting</th></tr></thead><tbody id="job-detail-rows"></tbody></table></div>
+      <section id="sweep-results" aria-labelledby="sweep-title" hidden><h3 id="sweep-title">Energy vs. response time</h3><p class="hint">Each point is a tested power-aware weight. “Nondominated” means no other <em>tested</em> weight improved both metrics.</p><div id="sweep-chart" class="chart" role="img"></div><div class="table-scroll"><table><thead><tr><th scope="col">Weight</th><th scope="col">Energy (mJ)</th><th scope="col">Mean response (ms)</th><th scope="col">Tested-point status</th></tr></thead><tbody id="sweep-rows"></tbody></table></div></section>
+    </section>
+    <section id="how-it-works" class="education"><div class="education-head"><span class="eyebrow">UNDER THE HOOD</span><h2>How it works<span class="heading-period">.</span></h2><p>One workload. Three different ways to decide what runs next.</p></div><div class="explain-grid"><article><span class="explain-number">01</span><h3>FCFS</h3><p>First Come, First Served runs each job to completion in arrival order. Simple, but a long job can hold up everything behind it.</p><span class="explain-tag">BASELINE</span></article><article><span class="explain-number">02</span><h3>Round Robin</h3><p>Jobs take turns for a fixed time slice. This helps other jobs start sooner, though switching jobs has a cost.</p><span class="explain-tag">BASELINE</span></article><article><span class="explain-number">03</span><h3>Power-aware</h3><p>Uses the same job rotation as Round Robin, but chooses a CPU frequency each turn based on your energy weight.</p><span class="explain-tag">TUNABLE POLICY</span></article></div></section>
+    <section id="about-model" class="model-note"><div><span class="eyebrow">IMPORTANT CONTEXT</span><h2>A model, not a power meter.</h2><p>Energy is calculated from your power settings and the time the simulated CPU spends running, idle or switching. Response time measures how long a job waits before its first run. A lower frequency can actually use <em>more</em> total energy if it runs longer. Results compare these specific inputs—not real hardware or a globally optimal schedule.</p><a href="../docs/SPEC.md">Read the simulation rules ↗</a></div><div class="formula"><span>THE CORE IDEA</span><strong>Energy <b>=</b> Power <b>×</b> Time</strong><small>W × ms = mJ</small><span class="formula-divider"></span><strong>Response <b>=</b> First start <b>−</b> Arrival</strong><small>Measured in simulated milliseconds</small></div></section>
+    <footer><span class="footer-brand">PowerSched <span>/ LAB</span></span><span>Built for understanding CPU scheduling, one experiment at a time.</span><span>SIMULATION ONLY · NO HARDWARE MEASUREMENTS</span></footer>
+  </main>
+  <script type="module" src="./app.js"></script>
+</body>
+</html>

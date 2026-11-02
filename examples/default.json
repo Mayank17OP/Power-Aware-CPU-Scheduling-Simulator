@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "jobs": [
+    {"id": "A", "arrivalMs": 0, "work": 8},
+    {"id": "B", "arrivalMs": 1, "work": 3},
+    {"id": "C", "arrivalMs": 4, "work": 5}
+  ],
+  "machine": {
+    "states": [
+      {"frequency": 0.5, "activeWatts": 1.5},
+      {"frequency": 1, "activeWatts": 3},
+      {"frequency": 1.5, "activeWatts": 6}
+    ],
+    "idleWatts": 0.5,
+    "switchMs": 0.2
+  },
+  "settings": {
+    "quantumMs": 2,
+    "weight": 0.5,
+    "sweepWeights": [0, 0.25, 0.5, 0.75, 1]
+  }
+}
