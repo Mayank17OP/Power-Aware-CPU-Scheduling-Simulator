@@ -1,4 +1,5 @@
 import { setPlayback } from './playback.js';
+import { runComparison } from '../src/policies.js';
 import { renderPolicy, renderSweep } from './results.js';
 
 const $ = (id) => document.getElementById(id);
@@ -109,8 +110,20 @@ async function calculate(input) {
   const button = $('run-button');
   button.disabled = true;
   $('backend-progress').hidden = false;
-  $('status').textContent = 'Sending the workload to the server for calculation…';
+  const onPages = location.hostname.endsWith('.github.io');
+  $('calculation-heading').textContent = onPages ? 'Calculating in your browser' : 'Calculating on the server';
+  $('calculation-detail').textContent = onPages
+    ? 'Checking jobs · building schedules · measuring energy locally'
+    : 'Checking jobs · building schedules · measuring energy';
+  $('status').textContent = onPages ? 'Calculating locally in your browser…' : 'Sending the workload to the server for calculation…';
   try {
+    if (onPages) {
+      // GitHub Pages hosts static files only. Run the exact same pure simulator locally.
+      await new Promise(resolve => setTimeout(resolve, 0));
+      showResults(runComparison(input));
+      $('status').textContent = 'Comparison complete in your browser. Results are simulated estimates.';
+      return true;
+    }
     const response = await fetch('/api/simulate', {
       method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(input),
     });
